@@ -11,8 +11,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorEnum {
-    /* 内部服务器异常 */
-    INTERNAL_SERVER_ERROR(500,"HTTP Status 500 – Internal Server Error"),
     /* 错误 */
     COMMON_ERROR(1000, "error"),
     /* 鉴权错误 */
@@ -28,7 +26,7 @@ public enum ErrorEnum {
     EVENT_NOT_EXIST(1008,"event not exist"),
     /* 登录异常 */
     LOGIN_ERROR(1009,"login failed"),
-    LOGIN_EXPIRE(1010,"login expire"),
+    LOGIN_EXPIRE(1010,"login expired"),
     NOT_REGISTER(1011,"user info not exist please register first"),
 
     /* 其他服务错误 */

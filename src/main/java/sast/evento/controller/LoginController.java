@@ -37,12 +37,13 @@ public class LoginController {
     @PostMapping("/login/link")
     @DefaultActionState(ActionState.PUBLIC)
     public Map<String, Object> linkLogin(@RequestParam String code,
-                                         @RequestParam Integer type) {
+                                         @RequestParam Integer type,
+                                         @RequestParam(required = false,defaultValue = "false") Boolean update) {
         if (code == null || code.isEmpty()) {
             throw new LocalRunTimeException(ErrorEnum.PARAM_ERROR, "invalid code");
         }
         try {
-            return loginService.linkLogin(code,type);
+            return loginService.linkLogin(code,type,update);
         } catch (SastLinkException e) {
             throw new LocalRunTimeException(ErrorEnum.SAST_LINK_SERVICE_ERROR, e.getMessage());
         }
@@ -100,18 +101,6 @@ public class LoginController {
         UserModel user = HttpInterceptor.userHolder.get();
         loginService.checkTicket(user.getStudentId(), ticket);
         return "ok";
-    }
-
-    /**
-     * 获取使用密码登录时加密使用的RSA公钥
-     * @param studentId 学号
-     * @return Map
-     */
-    @OperateLog("获取key")
-    @GetMapping("/login/key")
-    @DefaultActionState(ActionState.PUBLIC)
-    public Map<String, Object> getKey(@RequestParam String studentId){
-        return loginService.getKeyForLogin(studentId);
     }
 
     /**

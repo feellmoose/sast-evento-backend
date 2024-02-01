@@ -1,18 +1,17 @@
 package sast.evento.controller;
 
+import fun.feellmoose.exception.SastLinkException;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import sast.evento.annotation.DefaultActionState;
 import sast.evento.annotation.OperateLog;
 import sast.evento.common.enums.ActionState;
 import sast.evento.common.enums.ErrorEnum;
-import sast.evento.common.enums.Platform;
-import sast.evento.entitiy.User;
 import sast.evento.exception.LocalRunTimeException;
 import sast.evento.interceptor.HttpInterceptor;
 import sast.evento.model.UserModel;
 import sast.evento.service.LoginService;
-import sast.sastlink.sdk.exception.SastLinkException;
+
 
 import java.util.Map;
 
@@ -78,15 +77,13 @@ public class LoginController {
 
     /**
      * 获取授权给新设备登录的ticket
-     * @param studentId 学号
      * @return Map
      */
     @OperateLog("获取ticket")
     @PostMapping("/login/ticket/get")
     @DefaultActionState(ActionState.PUBLIC)
-    public Map<String, Object> getTicket(@RequestParam String studentId,
-                                         @RequestParam(required = false) String ticket){
-        return loginService.getLoginTicket(studentId,ticket);
+    public Map<String, Object> getTicket(@RequestParam(required = false) String ticket){
+        return loginService.getLoginTicket(ticket);
     }
 
     /**
@@ -99,7 +96,7 @@ public class LoginController {
     @DefaultActionState(ActionState.LOGIN)
     public String loginByTicket(@RequestParam String ticket){
         UserModel user = HttpInterceptor.userHolder.get();
-        loginService.checkTicket(user.getStudentId(), ticket);
+        loginService.checkLoginTicket(ticket,user.getId());
         return "ok";
     }
 

@@ -55,6 +55,9 @@ public class EventServiceImpl implements EventService {
     private EventDepartmentService eventDepartmentService;
 
     @Resource
+    private ParticipateService participateService;
+
+    @Resource
     private PermissionService permissionService;
 
     @Resource
@@ -127,13 +130,19 @@ public class EventServiceImpl implements EventService {
         return res;
     }
 
-    // 获取已订阅的活动列表
+    // 获取已订阅的活动列表（本周和未来的活动）
     @Override
     public List<EventModel> getSubscribed(String userId) {
         if (userId == null) {
             throw new LocalRunTimeException(ErrorEnum.PARAM_ERROR);
         }
-        return eventModelMapper.getSubscribed(userId);
+        String time = timeUtil.getTime();
+        List<Date> dates = timeUtil.getDateOfMonday(time);
+        if (dates == null || dates.isEmpty()) {
+            throw new LocalRunTimeException(ErrorEnum.TIME_ERROR);
+        }
+        dates.set(1, timeUtil.FINAL_DATE);
+        return eventModelMapper.getSubscribed(userId, dates.get(0), dates.get(1));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -202,6 +211,7 @@ public class EventServiceImpl implements EventService {
         if (!eventDepartmentService.deleteEventDepartmentsByEventId(eventId)) {
             throw new LocalRunTimeException(ErrorEnum.COMMON_ERROR, "delete eventDepartment failed");
         }
+        participateService.deleteAllParticipateOfEvent(eventId);
         boolean isSuccess = eventMapper.deleteById(eventId) > 0;
         if (isSuccess) {
             eventStateScheduleService.removeJobs(eventId);
@@ -381,29 +391,37 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventModel> postForEvents(List<Integer> typeId, List<Integer> departmentId, String time) {
         String today = timeUtil.getTime();
-        List<Date> date = timeUtil.getDateOfMonday(today);
-        // 如果time不为空，则将date起始日期改为time所设置的日期
+        List<Date> dates = timeUtil.getDateOfMonday(today);
+        // 如果time不为空，则将dates起始日期改为time所设置的日期
         if (!time.isEmpty()) {
-            date.set(0,timeUtil.validTime(time).getTime());
+            dates.set(0, timeUtil.validTime(time).getTime());
+            dates.set(1, timeUtil.FINAL_DATE);
         }
         if (typeId.isEmpty()) {
             if (departmentId.isEmpty()) {
-                return eventModelMapper.getEventByTime(date.get(0), date.get(1));
+                return eventModelMapper.getEventByTime(dates.get(0), dates.get(1));
             }
-            return eventModelMapper.getEventByDepartmentIdAndTime(departmentId, date.get(0), date.get(1));
+            return eventModelMapper.getEventByDepartmentIdAndTime(departmentId, dates.get(0), dates.get(1));
         }
         if (departmentId.isEmpty()) {
-            return eventModelMapper.getEventByTypeIdAndTime(typeId, date.get(0), date.get(1));
+            return eventModelMapper.getEventByTypeIdAndTime(typeId, dates.get(0), dates.get(1));
         }
-        return eventModelMapper.postForEventsByAll(typeId, departmentId, date.get(0), date.get(1));
+        return eventModelMapper.postForEventsByAll(typeId, departmentId, dates.get(0), dates.get(1));
     }
 
+    // 获取已报名的活动列表（本周和未来的活动）
     @Override
     public List<EventModel> getRegistered(String userId) {
         if (userId == null) {
             throw new LocalRunTimeException(ErrorEnum.PARAM_ERROR);
         }
-        return eventModelMapper.getRegistered(userId);
+        String time = timeUtil.getTime();
+        List<Date> dates = timeUtil.getDateOfMonday(time);
+        if (dates == null || dates.isEmpty()) {
+            throw new LocalRunTimeException(ErrorEnum.TIME_ERROR);
+        }
+        dates.set(1, timeUtil.FINAL_DATE);
+        return eventModelMapper.getRegistered(userId, dates.get(0), dates.get(1));
     }
 
     private EventState getMatchState(Date registrationStart, Date registrationEnd, Date eventStart, Date eventEnd) {

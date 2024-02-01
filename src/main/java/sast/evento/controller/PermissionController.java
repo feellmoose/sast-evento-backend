@@ -214,13 +214,32 @@ public class PermissionController {
         return permissionService.getUserManagerPermissAsList(eventId, user.getId());
     }
 
+    @OperateLog("分页查询所有用户")
+    @DefaultActionState(ActionState.ADMIN)
+    @GetMapping(value = "/users")
+    public Map<String, Object> getUsers(@RequestParam(required = false,defaultValue = "1")Integer current,
+                                           @RequestParam(required = false,defaultValue = "10")Integer size) {
+        Page<User> userPage = permissionService.getUsers(current, size);
+        return Map.of("users", userPage.getRecords(), "total", userPage.getTotal());
+    }
+
+    @OperateLog("模糊查询用户")
+    @DefaultActionState(ActionState.ADMIN)
+    @GetMapping(value = "/users/search")
+    public Map<String, Object> searchUsers(@RequestParam String keyword,
+                                           @RequestParam(required = false,defaultValue = "1")Integer current,
+                                           @RequestParam(required = false,defaultValue = "10")Integer size){
+        Page<User> userPage = permissionService.searchUsers(keyword, current, size);
+        return Map.of("users", userPage.getRecords(), "total", userPage.getTotal());
+    }
+
     private String checkUser(String userId, String studentId) {
         if (userId != null && !userId.isEmpty()) {
             return userId;
         }
         if (studentId != null && !studentId.isEmpty()) {
             User user = userService.getUserByStudentId(studentId);
-            if (user.getId() == null) {
+            if(user == null || user.getId() == null){
                 throw new LocalRunTimeException(ErrorEnum.STUDENT_NOT_BIND);
             }
             return user.getId();

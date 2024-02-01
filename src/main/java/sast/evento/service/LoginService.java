@@ -1,6 +1,7 @@
 package sast.evento.service;
 
-import sast.sastlink.sdk.exception.SastLinkException;
+
+import fun.feellmoose.exception.SastLinkException;
 
 import java.util.Map;
 
@@ -15,9 +16,9 @@ public interface LoginService {
 
     Map<String, Object> bindStudentOnWechat(String userId, String studentId, Boolean force);
 
-    Map<String, Object> getLoginTicket(String studentId, String ticket);
+    Map<String, Object> getLoginTicket(String ticket);
 
-    void checkTicket(String studentId, String ticket);
+    void checkLoginTicket(String ticket,String userId);
 
     void bindPassword(String studentId, String password);
 

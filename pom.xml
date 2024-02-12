@@ -11,13 +11,108 @@
     <groupId>sast.evento</groupId>
     <artifactId>SAST-Evento</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>SAST-Evento-Backend</name>
     <description>SAST-Evento-Backend</description>
+    <modules>
+        <module>evento-main</module>
+        <module>evento-location</module>
+        <module>evento-spring-web-share</module>
+        <module>evento-abac</module>
+        <module>evento-login</module>
+    </modules>
+
     <properties>
         <java.version>17</java.version>
+        <spring.version>3.1.1</spring.version>
+        <sast-link-sdk.version>0.1.2</sast-link-sdk.version>
+        <jwt.version>3.4.0</jwt.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mysql.version>8.0.33</mysql.version>
+        <lombok.version>1.18.28</lombok.version>
+        <cos-sdk.version>5.6.155</cos-sdk.version>
     </properties>
-    <dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- sast-link-sdk -->
+            <dependency>
+                <groupId>fun.feellmoose</groupId>
+                <artifactId>sast-link-SDK</artifactId>
+                <version>${sast-link-sdk.version}</version>
+            </dependency>
+
+            <!-- quartz -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <!-- jwt -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+
+
+            <!-- cos_sdk-->
+            <dependency>
+                <groupId>com.qcloud</groupId>
+                <artifactId>cos_api</artifactId>
+                <version>${cos-sdk.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -30,26 +125,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-
-        <!-- sast-link-sdk -->
         <dependency>
             <groupId>fun.feellmoose</groupId>
             <artifactId>sast-link-SDK</artifactId>
-            <version>0.1.2</version>
         </dependency>
-
-        <!-- quartz -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -57,36 +145,24 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.3.1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- jwt -->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.4.0</version>
         </dependency>
-
-
-        <!-- cos_sdk-->
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
-            <version>5.6.155</version>
         </dependency>
-
-
     </dependencies>
 
     <repositories>
